@@ -11,7 +11,7 @@ print(sys.executable)
 
 MAX_LEN = 128
 
-model_path = "1118_15epochs"
+model_path = "1118_15epoch"
 tokenizer = AutoTokenizer.from_pretrained(model_path)
 model = AutoModelForSequenceClassification.from_pretrained(model_path)
 

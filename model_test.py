@@ -1,5 +1,6 @@
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 from explainer import explain_sample
+from explainer import explain_sample_filtered
 import torch.nn as nn
 import torch.nn.functional as F
 import torch
@@ -47,3 +48,4 @@ print(logits)
 print(f'위험도 레벨: {pred}')
 text_to_explain = tokenizer.decode(input_ids.squeeze(0), skip_special_tokens=True)
 explain_sample(model, tokenizer, text_to_explain)
+explain_sample_filtered(model, tokenizer, text_to_explain)

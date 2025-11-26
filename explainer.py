@@ -1,4 +1,5 @@
 from transformers_interpret import SequenceClassificationExplainer
+<<<<<<< HEAD
 import MeCab
 
 mecab = MeCab.Tagger(f"-d /usr/local/lib/mecab/dic/mecab-ko-dic")  # Ko-dic 사용
@@ -30,6 +31,8 @@ def explain_sample_filtered(model, tokenizer, text):
         print(f"[Explainer Error: {e}]")
         return None
 
+=======
+>>>>>>> dfcaf7c (Initial commit)
 
 def explain_sample(model, tokenizer, text):
     """

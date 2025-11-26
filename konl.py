@@ -1,60 +1,49 @@
-<<<<<<< HEAD
 import os
 import jpype
-import jpype.imports
-from konlpy.tag import Okt
 from konlpy.tag import Mecab
 
-
+#-------------------------- Konlpy Mecab JVM Setup --------------------------#
 konlpy_jar_path = os.path.join(
     os.path.dirname(__file__),
     "../.venv/lib/python3.9/site-packages/konlpy/java"
 )
-# 확인한 libjvm.dylib 경로
-# jvm_path = r"/Library/Java/JavaVirtualMachines/openjdk-19/Contents/Home/lib/server/libjvm.dylib"
 jvm_path = jpype.getDefaultJVMPath()    # ★ 직접 path 하드코딩하지 않기 ★
+
 # JVM 시작 (classpath 따로 지정)
-jpype.startJVM(
-    jvm_path,
-    "-Dfile.encoding=UTF-8",
-    classpath=f"{konlpy_jar_path}/*"
-)
-=======
-import jpype
-from konlpy.tag import Okt
-
-# 확인한 libjvm.dylib 경로
-jvm_path = r"/Library/Java/JavaVirtualMachines/jdk-1.8.jdk/Contents/Home/lib/server/libjvm.dylib"
-
->>>>>>> dfcaf7c (Initial commit)
-# JVM 시작
 if not jpype.isJVMStarted():
-    jpype.startJVM(jvm_path, "-Dfile.encoding=UTF-8")
+    jpype.startJVM(
+        jvm_path,
+        "-Dfile.encoding=UTF-8",
+        classpath=f"{konlpy_jar_path}/*"
+    )
 
-<<<<<<< HEAD
-mecab = Mecab(dicpath="/usr/local/Cellar/mecab-ko-dic/2.1.1-20180720/lib/mecab/dic/mecab-ko-dic")
-text = "숨이 막혀요 너무 힘들어요 응급실 가야하나"
-print(mecab.morphs(text))
+# 환경변수로 (배포시 고정 경로 사용하지 않도록)
+dictpath = os.environ.get("MECAB_PATH")
 
-print("Morphs:", mecab.morphs(text))
-print("POS:", mecab.pos(text))
-print("Nouns:", mecab.nouns(text))
+#-------------------------- Morphological Analysis --------------------------#
+pos_dict = {
+    'NNG': '일반 명사',
+    'NNP': '고유 명사',
+    'NNB': '의존 명사',
+    'NR': '수사',
+    'NP': '대명사',
+    'VV': '동사',
+    'VA': '형용사', # 한국어에서 동사/형용사는 서술어 역할 (중요)
+    'VX': '보조 동사/형용사', # 보조 동사/형용사: '읽어 보다'에서 '~어 보다'
+    'MM': '관형사',
+    'MAG': '일반 부사',
+    'MAJ': '접속 부사',
+    'IC': '감탄사',
+}
+
+mecab = Mecab(dicpath=dictpath)
+
+def extract_important_word(result, mecab=mecab):
+    meaningful_words = []
+    for word, score in result:
+        pos = mecab.pos(word)
+        if any(pos in pos_dict.keys() for _, pos in pos):
+            meaningful_words.append({word: score})
+    return meaningful_words
 
 jpype.shutdownJVM()
-=======
-# Okt 사용
-okt = Okt()
-text = "숨이 막혀요 너무 힘들어요 응급실 가야하나"
-
-print("Morphs:", okt.morphs(text))
-print("POS:", okt.pos(text))
-print("Nouns:", okt.nouns(text))
-
-
->>>>>>> dfcaf7c (Initial commit)
-# from pororo import Pororo
-
-# Pororo.available_models("dp")
-# dp = Pororo(task="dep_parse", lang="ko")
-
-# dp('중간고사 점수 내가 반에서 제일 잘 받음')

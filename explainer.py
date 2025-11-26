@@ -1,9 +1,5 @@
 from transformers_interpret import SequenceClassificationExplainer
-<<<<<<< HEAD
-import MeCab
-
-mecab = MeCab.Tagger(f"-d /usr/local/lib/mecab/dic/mecab-ko-dic")  # Ko-dic 사용
-
+from konl import extract_important_word
 
 def explain_sample_filtered(model, tokenizer, text):
     """
@@ -13,16 +9,16 @@ def explain_sample_filtered(model, tokenizer, text):
     try:
         word_attributions = explainer(text)
         # 단어별 중요도
-        result = [(w, float(s)) for w, s in word_attributions]
+        result = [(w, round(s, 3)) for w, s in word_attributions]
 
         #  ##로 시작하는 서브워드 제거
         result = [(w, s) for w, s in result if not w.startswith("##")]
-
-        # 중요도 높은 순으로 정렬
-        # filtered = sorted(filtered, key=lambda x: x[1], reverse=True)
+        
+        # 명사 + 형용사만 추출
+        result = extract_important_word(result)
 
         print(f"[Input Text]: {text}\n")
-        print("[Meaningful Word Importances (Noun + Adjective)]")
+        print("[Meaningful Word Importances]:")
         for w, s in result:
             print(f"{w:15s} -> {s}")
         return result
@@ -31,8 +27,6 @@ def explain_sample_filtered(model, tokenizer, text):
         print(f"[Explainer Error: {e}]")
         return None
 
-=======
->>>>>>> dfcaf7c (Initial commit)
 
 def explain_sample(model, tokenizer, text):
     """

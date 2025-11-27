@@ -42,7 +42,7 @@ class RiskModel:
         return decoded_text
 
 
-    def explain_text(self, text: str, filter_pos: bool = True):
+    def explain_text_with_konlpy(self, text: str, filter_pos: bool = True):
         explainer = SequenceClassificationExplainer(self.model, self.tokenizer)
         try:
             word_attributions = explainer(text)
@@ -57,6 +57,23 @@ class RiskModel:
             if filter_pos:
                 word_attributions = extract_important_word(word_attributions)
                 print('[Explainer] Filtered by POS tags.')
+            
+            return word_attributions
+        
+        except Exception as e:
+            raise RuntimeError(f"Explainer failed: {e}")
+        
+    def naive_explain_text(self, text: str):
+        explainer = SequenceClassificationExplainer(self.model, self.tokenizer)
+        try:
+            word_attributions = explainer(text)
+            print('[Explainer] Word attributions computed.')
+            # 소수점 3자리 반올림
+            word_attributions = [(w, round(s, 3)) for w, s in word_attributions]
+            print('[Explainer] Word attributions rounded.')
+            # 서브워드 제거
+            word_attributions = [(w, s) for w, s in word_attributions if not w.startswith("##")]
+            print('[Explainer] Subword tokens removed.')
             
             return word_attributions
         

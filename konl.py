@@ -1,12 +1,20 @@
 import os
 import jpype
 from konlpy.tag import Mecab
+from dotenv import load_dotenv
+
+load_dotenv()
+
+jvm_path = os.environ.get("JVM_PATH")
+konlpy_jar_path = os.environ.get("KONLPY_JAR_PATH")
+dictpath = os.environ.get("MECAB_PATH")
+
 
 #-------------------------- Konlpy Mecab JVM Setup --------------------------#
-konlpy_jar_path = os.path.join(
-    os.path.dirname(__file__),
-    "../.venv/lib/python3.9/site-packages/konlpy/java"
-)
+# konlpy_jar_path = os.path.join(
+#     os.path.dirname(__file__),
+#     "../.venv/lib/python3.9/site-packages/konlpy/java"
+# )
 jvm_path = jpype.getDefaultJVMPath()    # ★ 직접 path 하드코딩하지 않기 ★
 
 # JVM 시작 (classpath 따로 지정)
